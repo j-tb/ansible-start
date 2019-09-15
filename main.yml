@@ -15,9 +15,19 @@
   hosts: all
   connection: local
   gather_facts: false
-  roles:
-    - get-backups
+  vars_prompt:
+      - name: password
+        private: yes
 
+  tasks:
+      - ios_facts:
+          host: "{{ inventory_hostname }}"
+          username: dsoper
+          password: "{{ password }}"
+        register: backup
+
+     - debug:
+         msg: "{{backup}}"
 
 
 
