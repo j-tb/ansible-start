@@ -1,0 +1,40 @@
+---
+
+po_summary:
+{% for k,v in hostvars[inventory_hostname].napalm_interfaces|dictsort %}
+{% if v.is_up == true and k.find('ae') != -1 and not "." in k %}
+    - {{ k }}
+{% endif %}
+{% endfor %}
+
+
+lldp_neighbors:
+{% for n in junos_lldp.resource %}
+- local_intf: {{ n.local_int }}
+{% if n.remote_sysname %}
+  neighbor: {{ n.remote_sysname}}
+{% else %}
+  neighbor: {{ n.remote_chassis_id }}
+{% endif %}
+{% if n.local_parent %}
+{% if not "-" in n.local_parent %}
+  local_po: {{ n.local_parent }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+non_lldp_neighbors:
+{% for k,v in hostvars[inventory_hostname].napalm_interfaces|dictsort  %}
+{% if k in unknown_ports %}
+- local_intf: {{ k }}
+  description: {{ v.description }}
+  local_po:
+{% endif %}
+{% endfor %}
+
+unknown_neighbors:
+{% for n in junos_lldp.resource %}
+{% if not n.remote_sysname %}
+  - {{ n.remote_chassis_id }}
+{% endif %}
+{% endfor %}

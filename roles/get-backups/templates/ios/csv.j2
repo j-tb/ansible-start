@@ -1,0 +1,10 @@
+{% if lldp_neighbors %}
+{% for intf in  lldp_neighbors %}
+{{ inventory_hostname_short }},{{ intf.local_intf }},{{ intf.local_po|default('N/A') }},{{ intf.neighbor|default('N/A') }}
+{% endfor %}
+{% endif %}
+{% if non_lldp_neighbors %}
+{% for intf in  non_lldp_neighbors %}
+{{ inventory_hostname }},{{ intf.local_intf }},{{ intf.local_po|default('N/A') }},{{ intf.description|default('N/A') }} 
+{% endfor %}
+{% endif %}

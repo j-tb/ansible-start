@@ -1,0 +1,5 @@
+{% for intf,lldp in hostvars[inventory_hostname].napalm_lldp_neighbors|dictsort if lldp|length > 0 %}
+{%  for n in lldp %}
+  {{inventory_hostname_short}}:{{intf}} -- {{n.hostname}}:{{n.port}}
+{%   endfor %}
+{% endfor %}

@@ -1,0 +1,51 @@
+---
+
+po_summary:
+{% for po in hostvars[inventory_hostname].ntc_po.response %}
+{% if po.phys_iface|length > 0 %}
+  {{po.bundle_iface}}:
+{% for int in po.phys_iface %}
+    - {{ int }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+po_phys:
+{% for po in hostvars[inventory_hostname].ntc_po.response %}
+{% if po.phys_iface|length > 0 %}
+{% for int in po.phys_iface %}
+    - {{ int }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+lldp_neighbors:
+{% for k,v in  hostvars[inventory_hostname].napalm_lldp_neighbors|dictsort %}
+- local_intf: {{ k }}
+{% for n in v  %}
+  neighbor: {{n.hostname}}
+{% for intf in hostvars[inventory_hostname].ntc_po.response %}
+{% if intf.phys_iface|length > 0 %}
+{% if k in intf.phys_iface %}
+  local_po: {{intf.bundle_iface}}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+non_lldp_neighbors:
+{% for k,v in napalm_result.ansible_facts.napalm_interfaces|dictsort  %}
+{% set intf_formatted = k.replace('ernet', '') %}
+{% if intf_formatted in unknown_ports %}
+- local_intf: {{ intf_formatted }}
+  description: {{ v.description }}
+{% for intf in hostvars[inventory_hostname].ntc_po.response %}
+{% if intf.phys_iface|length > 0 %}
+{% if intf_formatted in intf.phys_iface %}
+  local_po: {{intf.bundle_iface}}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}

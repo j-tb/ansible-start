@@ -1,0 +1,41 @@
+#TODO: orphaned_ports references host_vars file that isn't populated at run time, get variable error.
+#TODO: add assert statement to compare counts of port diffs.
+---
+- name: Make sure folder structure exists
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  pre_tasks:
+    - file:
+        path : "{{ config_dir }}/config-backups"
+        state : directory
+
+- name: Gather audit data
+  hosts: all
+  connection: local
+  gather_facts: false
+  roles:
+    - get-backups
+
+
+
+
+
+
+#
+# - name: Gather audit data
+#   hosts: juniper-switches
+#   connection: local
+#   gather_facts: false
+#   roles:
+#      - mac-to-hostname
+#
+#   tasks:
+#     - include_role:
+#         name: mac-to-hostname
+#       vars:
+#         mac: "{{ unknown_neighbors }}"
+#       when: inventory_hostname not in groups['juniper-firewalls']
+
+#

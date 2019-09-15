@@ -1,0 +1,25 @@
+# {{ inventory_hostname_short }}
+
+
+## Facts
+
+Serial Number: {{ napalm_result.ansible_facts.napalm_facts.serial_number }}
+
+OS Version: {{ napalm_result.ansible_facts.napalm_facts.os_version }}
+
+## Neighbors
+
+| Local Physical Interface | Local LAG | Neighbor |
+|--------------------------|-----------|----------|
+{% if lldp_neighbors %}
+{% for intf in  lldp_neighbors %}
+| {{ intf.local_intf }} | {{ intf.local_po|default('N/A') }} | {{ intf.neighbor|default('N/A') }} |
+{% endfor %}
+{% endif %}
+{% if non_lldp_neighbors %}
+{% for intf in  non_lldp_neighbors %}
+{% if intf not in neighbor_intf %}
+| {{ intf.local_intf }} | {{ intf.local_po|default('N/A') }} | {{ intf.description|default('N/A') }} |
+{% endif %}
+{% endfor %}
+{% endif %}
