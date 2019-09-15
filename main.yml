@@ -24,8 +24,8 @@
           host: "{{ inventory_hostname }}"
         register: backup
 
-     - debug:
-         msg: "{{backup}}"
+      - debug:
+          msg: "{{backup}}"
 
 
 
