@@ -12,8 +12,7 @@
         state : directory
 
 - name: Gather audit data
-  hosts: all
-  connection: network_cli
+  hosts: all 
   gather_facts: false
   vars_prompt:
       - name: password
